@@ -61,3 +61,41 @@ src/
 npm install
 npm run dev
 ```
+
+
+## Run with Docker Desktop
+
+### Option 1: Docker Compose (recommended for development)
+
+```bash
+docker compose up --build
+```
+
+Then open: `http://localhost:5173`
+
+To stop:
+
+```bash
+docker compose down
+```
+
+### Option 2: Docker CLI
+
+Build image:
+
+```bash
+docker build -t react-admin-dashboard .
+```
+
+Run container:
+
+```bash
+docker run --rm -p 5173:5173 react-admin-dashboard
+```
+
+Then open: `http://localhost:5173`
+
+### Notes for Docker Desktop users
+- Make sure Docker Desktop is running before executing commands.
+- On first run, image build can take a few minutes while dependencies are installed.
+- This setup runs Vite in dev mode with `--host 0.0.0.0` so your browser can access it from your machine.
