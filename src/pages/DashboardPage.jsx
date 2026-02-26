@@ -1,4 +1,5 @@
-import { useEffect } from 'react'
+import { Button, TextField } from '@mui/material'
+import { useEffect, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import {
   Bar,
@@ -14,16 +15,25 @@ import {
 import ActivityTable from '../components/ActivityTable'
 import ChartCard from '../components/ChartCard'
 import StatCard from '../components/StatCard'
-import { monthlySalesData, recentActivities, revenueData, stats } from '../data/dashboardData'
+import { useAppData } from '../context/AppDataContext'
 
 const DashboardPage = () => {
   const { loading, setLoading } = useOutletContext()
+  const { stats, revenueData, monthlySalesData, recentActivities, addRevenueEntry } = useAppData()
+  const [kpiForm, setKpiForm] = useState({ month: '', revenue: '', sales: '' })
 
   useEffect(() => {
     setLoading(true)
-    const timer = setTimeout(() => setLoading(false), 800)
+    const timer = setTimeout(() => setLoading(false), 400)
     return () => clearTimeout(timer)
   }, [setLoading])
+
+  const onAddKpi = (event) => {
+    event.preventDefault()
+    if (!kpiForm.month || !kpiForm.revenue || !kpiForm.sales) return
+    addRevenueEntry(kpiForm.month, kpiForm.revenue, kpiForm.sales)
+    setKpiForm({ month: '', revenue: '', sales: '' })
+  }
 
   return (
     <div className="space-y-6">
@@ -58,6 +68,13 @@ const DashboardPage = () => {
           </ResponsiveContainer>
         </ChartCard>
       </section>
+
+      <form onSubmit={onAddKpi} className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-800 dark:bg-slate-900 sm:grid-cols-4">
+        <TextField label="Month" size="small" value={kpiForm.month} onChange={(event) => setKpiForm((prev) => ({ ...prev, month: event.target.value }))} />
+        <TextField label="Revenue" size="small" type="number" value={kpiForm.revenue} onChange={(event) => setKpiForm((prev) => ({ ...prev, revenue: event.target.value }))} />
+        <TextField label="Sales" size="small" type="number" value={kpiForm.sales} onChange={(event) => setKpiForm((prev) => ({ ...prev, sales: event.target.value }))} />
+        <Button type="submit" variant="contained">Add KPI Data</Button>
+      </form>
 
       <ActivityTable rows={recentActivities} loading={loading} />
     </div>

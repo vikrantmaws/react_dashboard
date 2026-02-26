@@ -1,12 +1,26 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import AppLayout from './layout/AppLayout'
+import { useAuth } from './context/AuthContext'
 import DashboardPage from './pages/DashboardPage'
-import UsersPage from './pages/UsersPage'
+import LoginPage from './pages/LoginPage'
 import PlaceholderPage from './pages/PlaceholderPage'
+import UsersPage from './pages/UsersPage'
+
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated } = useAuth()
+  return isAuthenticated ? children : <Navigate to="/login" replace />
+}
 
 const App = () => (
   <Routes>
-    <Route element={<AppLayout />}>
+    <Route path="/login" element={<LoginPage />} />
+    <Route
+      element={(
+        <ProtectedRoute>
+          <AppLayout />
+        </ProtectedRoute>
+      )}
+    >
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/users" element={<UsersPage />} />
       <Route path="/orders" element={<PlaceholderPage title="Orders" />} />
